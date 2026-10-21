@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Online Base64 Encoder & Decoder — Text, URL-Safe & File to Base64 | Dinal Studios</title>
+<meta name="description" content="Free Base64 encoder and decoder: convert text to Base64 and back, use the URL-safe variant, turn any file into a Base64 data string — all privately in your browser. Includes a plain-English guide to what Base64 is and is not.">
+<meta name="keywords" content="base64 encoder, base64 decoder, base64 encode online, base64 decode online, file to base64, image to base64, url safe base64, base64 converter">
+<style>
+  * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+  body { margin: 0; background: #0a0f1a; color: #dbe4f3; }
+  header { background: radial-gradient(1000px 400px at 50% -80px, #14532d 0%, #0a0f1a 60%); padding: 46px 16px 30px; text-align: center; border-bottom: 1px solid #1d2b45; }
+  header h1 { margin: 0 0 8px; font-size: 32px; letter-spacing: .5px; }
+  header h1 span { color: #22c55e; }
+  header p { margin: 0; color: #93a5c4; font-size: 15px; }
+  .mono { font-family: 'Consolas', 'Courier New', monospace; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 22px 14px 46px; }
+  .card { background: #111a2c; border: 1px solid #1f2c47; border-radius: 14px; padding: 22px; margin-bottom: 20px; }
+  .card h2 { margin: 0 0 6px; font-size: 20px; color: #fff; }
+  .card h2 .tag { color: #22c55e; font-size: 13px; vertical-align: middle; }
+  .card .sub { color: #93a5c4; font-size: 13.5px; margin: 0 0 16px; }
+  textarea, input[type=text] { width: 100%; padding: 12px; border-radius: 9px; border: 1px solid #2a3a5c; background: #0a0f1a; color: #fff; font-size: 14px; }
+  textarea { min-height: 110px; resize: vertical; word-break: break-all; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .btn { background: #22c55e; color: #06280f; border: none; padding: 11px 20px; border-radius: 9px; cursor: pointer; font-weight: 700; font-size: 14px; }
+  .btn:hover { background: #2fe673; }
+  .btn.dark { background: #1f2c47; color: #dbe4f3; }
+  .btn.dark:hover { background: #2a3c61; }
+  .err { color: #fca5a5; font-size: 13.5px; min-height: 18px; }
+  label.chk { font-size: 13.5px; color: #c6d2e8; display: inline-flex; gap: 6px; align-items: center; margin-right: 12px; }
+  .terms { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 620px){ .terms { grid-template-columns: 1fr; } }
+  .term { background: #0a0f1a; border: 1px solid #1f2c47; border-radius: 10px; padding: 12px 14px; font-size: 13.5px; }
+  .term b { color: #fff; }
+  .rule { background: #2a1215; border: 1px solid #7f1d1d; color: #fecaca; border-radius: 10px; padding: 13px 15px; font-size: 14px; margin-top: 14px; }
+  .privacy { text-align: center; color: #64769a; font-size: 12.5px; margin-top: 4px; }
+  footer { text-align: center; color: #55688c; font-size: 12px; padding: 20px; }
+</style>
+</head>
+<body>
+<header>
+  <h1><span>⇄</span> Base64 Encoder &amp; Decoder</h1>
+  <p>Text, URL-safe and file-to-Base64 conversion — privately in your browser — by Dinal Studios</p>
+</header>
+<div class="wrap">
+
+  <div class="card">
+    <h2>🔤 Text ⇄ Base64 <span class="tag">UTF-8 SAFE</span></h2>
+    <p class="sub">Works correctly with any language, emoji and symbols — not just plain ASCII. Toggle URL-safe mode to use <span class="mono">-</span> and <span class="mono">_</span> instead of <span class="mono">+</span> and <span class="mono">/</span>, with padding removed.</p>
+    <textarea id="plainIn" class="mono" placeholder="Plain text goes here… e.g. Hello, world! 👋"></textarea>
+    <div class="row" style="margin:12px 0">
+      <button class="btn" onclick="doEncode()">Encode ↓</button>
+      <button class="btn" onclick="doDecode()">Decode ↑</button>
+      <label class="chk"><input type="checkbox" id="urlSafe"> URL-safe variant</label>
+      <button class="btn dark" onclick="swapBoxes()">Swap boxes</button>
+    </div>
+    <textarea id="b64In" class="mono" placeholder="Base64 goes here… e.g. SGVsbG8sIHdvcmxkIQ=="></textarea>
+    <div class="row" style="margin-top:12px">
+      <button class="btn dark" onclick="copyBox('plainIn')">Copy Text</button>
+      <button class="btn dark" onclick="copyBox('b64In')">Copy Base64</button>
+      <span class="err" id="errMsg"></span>
+    </div>
+    <p class="sub" style="margin-top:10px" id="sizeInfo"></p>
+  </div>
+
+  <div class="card">
+    <h2>📁 File → Base64</h2>
+    <p class="sub">Convert any file (image, PDF, small archive) into a Base64 data string — useful for embedding images in CSS/HTML or testing APIs. The file is read locally; nothing is uploaded. Images also show a preview below.</p>
+    <input type="file" id="fileIn">
+    <textarea id="fileOut" class="mono" readonly placeholder="The file's Base64 data URL will appear here…" style="margin-top:12px"></textarea>
+    <div class="row" style="margin-top:12px">
+      <button class="btn dark" onclick="copyBox('fileOut')">Copy Data URL</button>
+      <label class="chk"><input type="checkbox" id="rawB64"> Raw Base64 only (no data: prefix)</label>
+      <span id="fileInfo" style="font-size:13px;color:#93a5c4"></span>
+    </div>
+    <div id="preview" style="margin-top:12px"></div>
+  </div>
+
+  <div class="card">
+    <h2>🎓 What Is Base64 — and What It Is NOT</h2>
+    <div class="terms">
+      <div class="term"><b>An encoding, not a lock.</b> Base64 rewrites binary data using 64 safe characters (A–Z, a–z, 0–9, +, /) so it can travel through systems designed for text — email, URLs, JSON, HTML. Every 3 bytes become 4 characters, so the output is about 33% larger.</div>
+      <div class="term"><b>Where you see it:</b> email attachments (MIME), images embedded in web pages (<span class="mono">data:image/png;base64,…</span>), JSON Web Tokens, basic-auth headers, and API payloads that must carry files as text.</div>
+    </div>
+    <div class="rule">⚠️ <b>Security note:</b> Base64 is <b>NOT encryption</b> and <b>NOT hashing</b>. Anyone can decode it instantly — including with this page. Never treat Base64 as a way to hide passwords, tokens or secrets. Attackers also use Base64 to disguise malicious payloads, which is exactly why defenders learn to decode and inspect it.</div>
+    <p class="privacy">🔒 100% private: encoding and decoding happen entirely on your device.</p>
+  </div>
+
+  <footer>Built by Dinal Studios · Free online Base64 encoder &amp; decoder · Educational and defensive use only</footer>
+</div>
+<script>
+function bytesToB64(bytes){
+  var bin = '';
+  var chunk = 0x8000;
+  for (var i = 0; i < bytes.length; i += chunk){
+    bin += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+  }
+  return btoa(bin);
+}
+function b64ToBytes(b64){
+  var bin = atob(b64);
+  var bytes = new Uint8Array(bin.length);
+  for (var i = 0; i < bin.length; i++){ bytes[i] = bin.charCodeAt(i); }
+  return bytes;
+}
+function toUrlSafe(b64){
+  return b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+function fromUrlSafe(s){
+  var b64 = s.replace(/-/g, '+').replace(/_/g, '/');
+  while (b64.length % 4){ b64 += '='; }
+  return b64;
+}
+function setErr(msg){ document.getElementById('errMsg').textContent = msg; }
+
+function doEncode(){
+  setErr('');
+  var text = document.getElementById('plainIn').value;
+  var bytes = new TextEncoder().encode(text);
+  var b64 = bytesToB64(bytes);
+  if (document.getElementById('urlSafe').checked){ b64 = toUrlSafe(b64); }
+  document.getElementById('b64In').value = b64;
+  document.getElementById('sizeInfo').textContent = text.length + ' characters → ' + bytes.length + ' UTF-8 bytes → ' + b64.length + ' Base64 characters.';
+}
+function doDecode(){
+  setErr('');
+  var s = document.getElementById('b64In').value.trim().replace(/\s+/g, '');
+  if (!s){ setErr('Paste some Base64 first.'); return; }
+  try {
+    var normalized = fromUrlSafe(s);
+    var bytes = b64ToBytes(normalized);
+    var text = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+    document.getElementById('plainIn').value = text;
+    document.getElementById('sizeInfo').textContent = s.length + ' Base64 characters → ' + bytes.length + ' bytes decoded as UTF-8 text.';
+  } catch (e) {
+    try {
+      var raw = b64ToBytes(fromUrlSafe(s));
+      setErr('That Base64 decodes to binary data, not readable UTF-8 text (' + raw.length + ' bytes). It may be a file or encrypted data.');
+    } catch (e2) {
+      setErr('Invalid Base64 — check for missing characters or stray symbols.');
+    }
+  }
+}
+function swapBoxes(){
+  var a = document.getElementById('plainIn'), b = document.getElementById('b64In');
+  var t = a.value; a.value = b.value; b.value = t; setErr('');
+}
+function copyBox(id){
+  var el = document.getElementById(id);
+  if (el.value && navigator.clipboard){ navigator.clipboard.writeText(el.value); }
+}
+
+var lastDataUrl = '', lastRaw = '';
+function renderFileOut(){
+  var raw = document.getElementById('rawB64').checked;
+  document.getElementById('fileOut').value = raw ? lastRaw : lastDataUrl;
+}
+document.getElementById('fileIn').addEventListener('change', function(){
+  var f = this.files[0];
+  if (!f) return;
+  var reader = new FileReader();
+  reader.onload = function(){
+    lastDataUrl = reader.result;
+    lastRaw = lastDataUrl.substring(lastDataUrl.indexOf(',') + 1);
+    renderFileOut();
+    document.getElementById('fileInfo').textContent = f.name + ' · ' + (f.size / 1024).toFixed(1) + ' KB → ' + lastRaw.length.toLocaleString() + ' Base64 characters';
+    document.getElementById('preview').innerHTML = f.type.indexOf('image/') === 0
+      ? '<img src="' + lastDataUrl + '" alt="Preview of the selected image file" style="max-width:100%;border-radius:10px;border:1px solid #1f2c47">'
+      : '';
+  };
+  reader.readAsDataURL(f);
+});
+document.getElementById('rawB64').addEventListener('change', renderFileOut);
+</script>
+</body>
+</html>
